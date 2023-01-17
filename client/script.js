@@ -57,6 +57,14 @@ function chatStripe(isAi, value, uniqueId) {
     `;
 }
 
+function limitChatHistory(chatHistory) {
+  if (chatHistory.length > 4200) {
+    return chatHistory.substring(chatHistory.length - 4200);
+  } else {
+    return chatHistory;
+  }
+}
+
 let chatHistory = "";
 
 const handleSubmit = async (e) => {
@@ -79,6 +87,7 @@ const handleSubmit = async (e) => {
 
   loader(messageDiv);
   chatHistory += `\n${data.get("prompt")}`;
+  chatHistory = limitChatHistory(chatHistory);
   // fetch data from server -> bot's response
   const response = await fetch("https://codex-bvgo.onrender.com", {
     method: "POST",
