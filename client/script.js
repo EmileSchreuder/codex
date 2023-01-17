@@ -57,6 +57,8 @@ function chatStripe(isAi, value, uniqueId) {
     `;
 }
 
+let chatHistory = "";
+
 const handleSubmit = async (e) => {
   e.preventDefault();
 
@@ -76,7 +78,7 @@ const handleSubmit = async (e) => {
   const messageDiv = document.getElementById(uniqueId);
 
   loader(messageDiv);
-
+  chatHistory += `\n${data.get("prompt")}`;
   // fetch data from server -> bot's response
   const response = await fetch("https://codex-bvgo.onrender.com", {
     method: "POST",
@@ -84,7 +86,7 @@ const handleSubmit = async (e) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      prompt: data.get("prompt"),
+      prompt: chatHistory,
     }),
   });
 
@@ -94,6 +96,8 @@ const handleSubmit = async (e) => {
   if (response.ok) {
     const data = await response.json();
     const parsedData = data.bot.trim();
+
+    chatHistory += `\n${parsedData}`;
 
     typeText(messageDiv, parsedData);
   } else {
